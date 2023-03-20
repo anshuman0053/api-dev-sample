@@ -32,4 +32,4 @@ jobs:
           url: 'https://b319-2401-4900-1c39-5b84-9227-f687-fda8-fd9f.in.ngrok.io/github-webhook/'
           user: 'anshuman0888'
           token: '${{ secrets.JENKINS_TOKEN }}'
-          job: 'job-name'
+          job: 'xray-linear'
