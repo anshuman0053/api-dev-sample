@@ -12,7 +12,7 @@ jobs:
       - name: Trigger GitHub webhook
         uses: distributhor/webhook-action@master
         with:
-          url: 'https://api.github.com/repos/OWNER/REPO_NAME/dispatches'
+          url: 'https://api.github.com/repos/anshuman0053/api-dev-sample/dispatches'
           method: 'POST'
           headers: '{"Content-Type":"application/json", "Authorization": "Bearer ${{ secrets.GITHUB_TOKEN }}"}'
           body: '{"event_type": "run-jenkins-job"}'
