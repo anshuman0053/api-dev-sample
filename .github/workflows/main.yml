@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger GitHub webhook
-        uses: distributhor/webhook-action@v1.0.0
+        uses: distributhor/webhook-action@master
         with:
           url: 'https://api.github.com/repos/postman-newman/webhooks/dispatches'
           method: 'POST'
@@ -21,15 +21,3 @@ jobs:
         run: |
           echo ${{ steps.trigger_github_webhook.outputs.status_code }}
           echo ${{ steps.trigger_github_webhook.outputs.response }}
-
-  jenkins_job:
-    needs: trigger_jenkins_job
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Jenkins job
-        uses: appleboy/jenkins-action@v1.11.0
-        with:
-          url: 'https://b319-2401-4900-1c39-5b84-9227-f687-fda8-fd9f.in.ngrok.io/github-webhook/'
-          user: 'anshuman0888'
-          token: '${{ secrets.JENKINS_TOKEN }}'
-          job: 'xray-linear'
