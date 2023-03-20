@@ -12,24 +12,12 @@ jobs:
       - name: Trigger GitHub webhook
         uses: distributhor/webhook-action@master
         with:
-          url: 'https://api.github.com/repos/anshuman0053/postman-newman/dispatches'
+          url: 'https://api.github.com/repos/postman-newman/webhooks'
           method: 'POST'
-          headers: '{"Content-Type":"application/json", "Authorization": "Bearer ${{ secrets.REPO_ACCESS_TOKEN }}"}'
-          body: '{"event_type": "run-jenkins-job"}'
-          
+          headers: '{"Content-Type":"application/json"}'
+          body: '{"jenkins_job_trigger": true}'
+
       - name: Check webhook response
         run: |
           echo ${{ steps.trigger_github_webhook.outputs.status_code }}
           echo ${{ steps.trigger_github_webhook.outputs.response }}
-
-  jenkins_job:
-    needs: trigger_jenkins_job
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Jenkins job
-        uses: appleboy/jenkins-action@master
-        with:
-          url: 'https://b319-2401-4900-1c39-5b84-9227-f687-fda8-fd9f.in.ngrok.io/github-webhook/'
-          user: 'anshuman0888'
-          token: '${{ secrets.JENKINS_TOKEN }}'
-          job: 'xray-linear'
