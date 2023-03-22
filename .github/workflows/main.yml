@@ -1,34 +1,17 @@
-name: Trigger Jenkins Job
+name: Trigger Webhook
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
-  trigger_jenkins_job:
+  trigger-webhook:
     runs-on: ubuntu-latest
-    steps:
-      - name: Trigger GitHub webhook
-        uses: postman-newman/webhooks@v1.0.0
-        with:
-          url: 'https://b319-2401-4900-1c39-5b84-9227-f687-fda8-fd9f.in.ngrok.io/github-webhook/'
-          body: '{"event_type": "run-jenkins-job"}'
-          secret: ${{ secrets.WEBHOOK_SECRET }}
-          
-      - name: Check webhook response
-        run: |
-          echo ${{ steps.trigger_github_webhook.outputs.status_code }}
-          echo ${{ steps.trigger_github_webhook.outputs.response }}
 
-  jenkins_job:
-    needs: trigger_jenkins_job
-    runs-on: ubuntu-latest
     steps:
-      - name: Trigger Jenkins job
-        uses: appleboy/jenkins-action@master
+      - name: Trigger Webhook
+        uses: peter-evans/webhook@v1.4.0
         with:
-          url: 'https://b319-2401-4900-1c39-5b84-9227-f687-fda8-fd9f.in.ngrok.io/github-webhook/'
-          user: 'anshuman0888'
-          token: '${{ secrets.JENKINS_TOKEN }}'
-          job: 'xray-linear'
+          url: https://0545-2401-4900-1c39-5b84-8de8-f0df-13b-3bb2.in.ngrok.io/job/Xray-demo/build # Replace this with the URL of your webhook
+          method: POST
+          body: '{"job": "Xray-demo"}' # Replace this with the name of your Jenkins job
