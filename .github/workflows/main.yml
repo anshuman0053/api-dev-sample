@@ -15,7 +15,7 @@ jobs:
       - name: Trigger Webhook
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.REPO_ACCESS_TOKEN_NEW }}
           http_method: POST
           url: https://0545-2401-4900-1c39-5b84-8de8-f0df-13b-3bb2.in.ngrok.io/job/Xray-demo/build
           body: '{"job": "Xray-demo"}'
