@@ -1,21 +1,59 @@
-name: Trigger Webhook
-
+name: Run API Tests and Trigger Jenkins Job
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  trigger-webhook:
+  Running_API_Tests:
     runs-on: ubuntu-latest
+    outputs:
+      job_status: ${{ steps.set_status.outputs.job_status }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-      - name: Trigger Webhook
-        uses: ad-m/github-push-action@master
+      - name: Install Python Packages
+        run: pip install requests
+  
+      - name: Install Node.js
+        uses: actions/setup-node@v2
         with:
-          github_token: ${{ secrets.REPO_ACCESS_TOKEN_NEW }}
-          http_method: POST
-          url: https://0545-2401-4900-1c39-5b84-8de8-f0df-13b-3bb2.in.ngrok.io/job/Xray-demo/build
-          body: '{"job": "Xray-demo"}'
+          node-version: '14.x'
+
+      - name: Install Newman
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-junitfull
+          npm install -g newman-reporter-junitxray
+        
+      - name: Run API tests via Newman
+        id: newman
+        run: newman run https://api.postman.com/collections/18481634-926bcc97-e8db-4354-ac57-e293cd106587?access_key=PMAT-01GV2Y8JN6HSKEW0PRMRKK8GVA --reporters cli,junitfull --reporter-junitfull-export cvc-report.xml
+
+      - name: Upload Newman JUnit report
+        continue-on-error: true
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: newman-report
+          path: cvc-report.xml
+          
+      - name: Set job status
+        id: set_status
+        if: ${{ always() }}
+        run: |
+          if [ "${{ steps.newman.outcome }}" == "success" ]; then
+            echo "::set-output name=job_status::success"
+          else
+            echo "::set-output name=job_status::failed"
+          fi
+
+  Trigger_Jenkins_Job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Jenkins Job
+        run: |
+          curl -X POST https://8417-2401-4900-1c39-5719-6898-9920-e4bb-c468.in.ngrok.io/job/Xray-demo/build \
+            --user ${{ secrets.JENKINS_USERNAME }}:${{ secrets.JENKINS_API_TOKEN }} \
+            --data-urlencode token=123456
